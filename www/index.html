@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Positive Kids</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-beta.1/jquery.mobile-1.2.0-beta.1.min.css" />
+    <script src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0-beta.1/jquery.mobile-1.2.0-beta.1.min.js"></script>
+</head>
+    <body>
+        <div data-role="page">
+
+            <div data-role="header">
+                <h1>Positive Kids</h1>
+            </div><!-- /header -->
+
+            <div data-role="content">   
+                <div data-role="collapsible-set">
+
+                    <div data-role="collapsible">
+                    <h3>Jack</h3>
+                        <label for="basic">What did he say?</label>
+                        <input type="text" name="name" id="basic" value=""  />
+                        <label for="select-choice-0" class="select">Was it positive or negative?</label>
+                        <select name="select-choice-0" id="select-choice-0">
+                            <option value="-1">- Select -</option>
+                           <option value="positive">Positive</option>
+                           <option value="negative">Negative</option>
+                        </select>
+                        <input type="submit" value="Save" />
+                    </div>
+                    
+                    <div data-role="collapsible">
+                    <h3>Hattie</h3>
+                        <label for="basic">What did she say?</label>
+                        <input type="text" name="name" id="basic" value=""  />
+                        <label for="select-choice-0" class="select">Was it positive or negative?</label>
+                        <select name="select-choice-0" id="select-choice-0">
+                            <option value="-1">- Select -</option>
+                           <option value="positive">Positive</option>
+                           <option value="negative">Negative</option>
+                        </select>
+                        <input type="submit" value="Save" />
+                    </div>
+                    
+                </div>
+            </div><!-- /content -->
+
+        </div><!-- /page -->
+    </body>
+</html>
