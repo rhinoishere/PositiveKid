@@ -1,0 +1,186 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+  <meta name=viewport content="user-scalable=no,width=device-width" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0-beta.1/jquery.mobile-1.2.0-beta.1.min.css" />
+    <link rel="stylesheet" href="css/PositiveKids.css" />
+    <script src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0-beta.1/jquery.mobile-1.2.0-beta.1.min.js"></script>
+</head> 
+
+<body> 
+
+<div data-role=page id="home">
+  <div data-role=header>
+    <h1>Home</h1>
+  </div>
+
+  <div data-role="content">
+    <a href=# data-role="button" id="create"> Create kids table </a>
+    <a href=# data-role="button" id="remove"> Delete kids table </a>
+    <span> Name: </span>
+    <input type="text" id="name">
+    <span> Age: </span>
+    <input type="text" id="age">    
+    <span> Birthday: </span>
+    <input type="text" id="birthdate">
+
+    <a href="#" data-role="button" id="insert"> Insert a new kid </a>
+    <a href="#" data-role="button" id="list"> List kids </a>
+  </div>
+</div>
+
+<div data-role="page" id="win2" data-add-back-btn="true">
+  <div data-role="header">
+    <h1>List of kids</h1>
+  </div>
+
+  <div data-role="content">
+  </div>
+</div>
+
+</body>
+</html>
+
+<script>
+
+var db = openDatabase ("Test", "1.0", "Test", 65535);
+
+$("#create").bind ("click", function (event)
+{
+  db.transaction (function (transaction) 
+  {
+    var sql = "CREATE TABLE kids " +
+        " (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+        "name VARCHAR(100) NOT NULL, " + 
+        "age VARCHAR(2) NOT NULL, " + 
+        "birthdate VARCHAR(35) NOT NULL)"
+    transaction.executeSql (sql, undefined, function ()
+    { 
+      alert ("Table created");
+    }, error);
+  });
+});
+
+$("#remove").bind ("click", function (event)
+{
+  if (!confirm ("Delete table?", "")) return;;
+  db.transaction (function (transaction) 
+  {
+    var sql = "DROP TABLE kids";
+    transaction.executeSql (sql, undefined, ok, error);
+  });
+});
+
+$("#insert").bind ("click", function (event)
+{
+  var name = $("#name").val ();
+  var age = $("#age").val ();
+  var birthdate = $("#birthdate").val ();
+
+  db.transaction (function (transaction) 
+  {
+    var sql = "INSERT INTO kids (name, age, birthdate) VALUES (?, ?, ?)";
+    transaction.executeSql (sql, [name, age, birthdate], function ()
+    { 
+      alert (name + " is ready to start becoming a more positive person!");
+    }, error);
+  });
+});
+
+$("#list").bind ("click", function (event)
+{
+  db.transaction (function (transaction) 
+  {
+    var sql = "SELECT * FROM kids";
+    transaction.executeSql (sql, undefined, 
+    function (transaction, result)
+    {
+          var html = "<ul class='kids-ul-header'><li class='headerField'>";
+          html += "Name" ; 
+          html += "</li>";
+          html += "<li class='headerField'>";
+          html += "Age" ; 
+          html += "</li>";
+          html += "<li class='headerField'>";
+          html += "Birthday" ; 
+          html += "</li></ul>";
+
+      if (result.rows.length)
+      {
+        for (var i = 0; i < result.rows.length; i++) 
+        {
+            html += "<ul class='kids-ul-content'>";
+          var row = result.rows.item (i);
+          var name = row.name;
+          var age = row.age;
+          var birthdate = row.birthdate;
+          var id = row.id;
+          html += "<li class='dataField' data-icon='false' " + "id=" + id + ">";
+          html +=   "<a href=#>";
+          html +=      name; 
+          html +=   "</a>"; 
+          html += "</li>";
+
+          html += "<li class='dataField' data-icon='false' " + "id=" + id + ">";
+          html +=   "<a href=#>";
+          html +=      age; 
+          html +=   "</a>"; 
+          html += "</li>";
+
+          html += "<li class='dataField' data-icon='false' " + "id=" + id + ">";
+          html +=   "<a href=#>";
+          html +=      birthdate ; 
+          html +=   "</a>"; 
+          html += "</li>";
+                html += "</ul>";
+        }
+      }
+      else
+      {
+        html += "<li> No kids yet... </li>";
+      }
+      
+      
+      $("#win2").unbind ().bind ("pagebeforeshow", function ()
+      {
+        var $content = $("#win2 div:jqmData(role=content)");
+        $content.html (html);
+        var $ul = $content.find ("ul");
+        $ul.listview ();
+        
+        $("li").bind ("swiperight", function (event)
+        {
+          var id = $(this).attr ("id");
+          if (!id) return;
+          
+          $(this).remove ();
+          
+          db.transaction (function (transaction) 
+          {
+            var sql = "DELETE FROM kids WHERE id=?";
+            transaction.executeSql (sql, [id], function ()
+            { 
+              alert ("Deleted.");
+            }, error);
+          });
+        });        
+      });
+      
+      $.mobile.changePage ($("#win2"));
+      
+    }, error);
+  });
+});
+
+function ok ()
+{
+}
+
+function error (transaction, err) 
+{
+  alert ("DB error : " + err.message);
+  return false;
+}
+
+</script>
